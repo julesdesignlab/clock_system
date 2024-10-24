@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock In/Out System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Clock In/Out System</h1>
+<button id="clockInBtn">Clock In</button>
+<button id="clockOutBtn" disabled>Clock Out</button>
+<button id="copyTableBtn">Copy Table</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Month</th>
+            <th>Reason</th>
+            <th>Hourly Rate</th>
+            <th>Clock In</th>
+            <th>Clock Out</th>
+        </tr>
+    </thead>
+    <tbody id="timeEntries"></tbody>
+</table>
+
+<script>
+    let clockInTime = null;
+
+    document.getElementById('clockInBtn').addEventListener('click', function() {
+        const now = new Date();
+        clockInTime = now;
+        document.getElementById('clockOutBtn').disabled = false;
+        this.disabled = true;
+        alert(`Clocked In at ${now.toLocaleTimeString()}`);
+    });
+
+    document.getElementById('clockOutBtn').addEventListener('click', function() {
+        if (clockInTime) {
+            const now = new Date();
+            const reason = prompt("Please enter a reason for this timestamp (leave blank if none):") || '';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${clockInTime.toLocaleDateString()}</td>
+                <td></td> <!-- Month column left blank -->
+                <td>${reason}</td>
+                <td></td> <!-- Hourly Rate column left blank -->
+                <td>${clockInTime.toLocaleTimeString()}</td>
+                <td>${now.toLocaleTimeString()}</td>
+            `;
+            document.getElementById('timeEntries').appendChild(row);
+
+            clockInTime = null;
+            this.disabled = true;
+            document.getElementById('clockInBtn').disabled = false;
+        }
+    });
+
+    document.getElementById('copyTableBtn').addEventListener('click', function() {
+        const tbody = document.getElementById('timeEntries');
+        const range = document.createRange();
+        range.selectNode(tbody);
+        window.getSelection().removeAllRanges();  // Clear previous selections
+        window.getSelection().addRange(range);     // Select the tbody
+        document.execCommand('copy');              // Copy the selection
+        window.getSelection().removeAllRanges();   // Deselect
+        alert("Table copied to clipboard!");
+    });
+</script>
+
+</body>
+</html>
